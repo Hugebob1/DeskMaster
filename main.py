@@ -52,6 +52,7 @@ class Desk(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     open_space_nr: Mapped[str] = mapped_column(Integer, nullable=False)
     description: Mapped[str] = mapped_column(String(500), nullable=False)
+    image_filename: Mapped[str] = mapped_column(String(100), nullable=True)
 
     reservations = relationship("Reservation", back_populates="desk")
 
@@ -70,42 +71,43 @@ class Reservation(db.Model):
 
 # adding desks
 desks = [
-    Desk(open_space_nr=1, description="Dual monitors, ergonomic chair, next to window"),
-    Desk(open_space_nr=1, description="Single monitor, near kitchen, standing desk"),
-    Desk(open_space_nr=1, description="Triple monitors, corner spot, noise-cancelling headphones"),
-    Desk(open_space_nr=1, description="Standard desk with lamp, near wall"),
-    Desk(open_space_nr=1, description="Dual monitors, high-back chair, under AC"),
-    Desk(open_space_nr=1, description="Single monitor, next to team leader"),
-    Desk(open_space_nr=1, description="Triple monitors, quiet zone, adjustable chair"),
-    Desk(open_space_nr=1, description="Single monitor, whiteboard nearby"),
+    Desk(open_space_nr=1, description="Dual monitors, ergonomic chair, next to window", image_filename="image1.jpg"),
+    Desk(open_space_nr=1, description="Single monitor, near kitchen, standing desk", image_filename="image1.jpg"),
+    Desk(open_space_nr=1, description="Triple monitors, corner spot, noise-cancelling headphones", image_filename="image1.jpg"),
+    Desk(open_space_nr=1, description="Standard desk with lamp, near wall", image_filename="image1.jpg"),
+    Desk(open_space_nr=1, description="Dual monitors, high-back chair, under AC", image_filename="image1.jpg"),
+    Desk(open_space_nr=1, description="Single monitor, next to team leader", image_filename="image1.jpg"),
+    Desk(open_space_nr=1, description="Triple monitors, quiet zone, adjustable chair", image_filename="image1.jpg"),
+    Desk(open_space_nr=1, description="Single monitor, whiteboard nearby", image_filename="image1.jpg"),
 
-    Desk(open_space_nr=2, description="Dual monitors, back to window, book shelf nearby"),
-    Desk(open_space_nr=2, description="Single monitor, open area, team desk"),
-    Desk(open_space_nr=2, description="Corner desk, triple monitors, quiet environment"),
-    Desk(open_space_nr=2, description="Height-adjustable desk, ergonomic keyboard"),
-    Desk(open_space_nr=2, description="Standard setup, under bright lights"),
-    Desk(open_space_nr=2, description="Dual monitors, bean bag next to it"),
-    Desk(open_space_nr=2, description="Single monitor, high traffic area"),
-    Desk(open_space_nr=2, description="Triple monitors, close to exit"),
+    Desk(open_space_nr=2, description="Dual monitors, back to window, book shelf nearby", image_filename="image2.jpg"),
+    Desk(open_space_nr=2, description="Single monitor, open area, team desk", image_filename="image2.jpg"),
+    Desk(open_space_nr=2, description="Corner desk, triple monitors, quiet environment", image_filename="image2.jpg"),
+    Desk(open_space_nr=2, description="Height-adjustable desk, ergonomic keyboard", image_filename="image2.jpg"),
+    Desk(open_space_nr=2, description="Standard setup, under bright lights", image_filename="image2.jpg"),
+    Desk(open_space_nr=2, description="Dual monitors, bean bag next to it", image_filename="image2.jpg"),
+    Desk(open_space_nr=2, description="Single monitor, high traffic area", image_filename="image2.jpg"),
+    Desk(open_space_nr=2, description="Triple monitors, close to exit", image_filename="image2.jpg"),
 
-    Desk(open_space_nr=3, description="Standing desk, dual monitors, window view"),
-    Desk(open_space_nr=3, description="Corner desk, one monitor, quiet side"),
-    Desk(open_space_nr=3, description="Dual monitors, near balcony door"),
-    Desk(open_space_nr=3, description="Single monitor, center of open space"),
-    Desk(open_space_nr=3, description="Triple monitors, storage cabinet nearby"),
-    Desk(open_space_nr=3, description="Standard desk, team collaboration area"),
-    Desk(open_space_nr=3, description="Dual monitors, by emergency exit"),
-    Desk(open_space_nr=3, description="Single monitor, plant decoration nearby"),
+    Desk(open_space_nr=3, description="Standing desk, dual monitors, window view", image_filename="image3.jpg"),
+    Desk(open_space_nr=3, description="Corner desk, one monitor, quiet side", image_filename="image3.jpg"),
+    Desk(open_space_nr=3, description="Dual monitors, near balcony door", image_filename="image3.jpg"),
+    Desk(open_space_nr=3, description="Single monitor, center of open space", image_filename="image3.jpg"),
+    Desk(open_space_nr=3, description="Triple monitors, storage cabinet nearby", image_filename="image3.jpg"),
+    Desk(open_space_nr=3, description="Standard desk, team collaboration area", image_filename="image3.jpg"),
+    Desk(open_space_nr=3, description="Dual monitors, by emergency exit", image_filename="image3.jpg"),
+    Desk(open_space_nr=3, description="Single monitor, plant decoration nearby", image_filename="image3.jpg"),
 
-    Desk(open_space_nr=4, description="Triple monitors, executive chair, window side"),
-    Desk(open_space_nr=4, description="Single monitor, shared table, open space"),
-    Desk(open_space_nr=4, description="Dual monitors, creative zone, whiteboard wall"),
-    Desk(open_space_nr=4, description="Triple monitors, next to manager desk"),
-    Desk(open_space_nr=4, description="Standing desk, ergonomic mat, back to wall"),
-    Desk(open_space_nr=4, description="Dual monitors, LED lamp, bookshelf"),
-    Desk(open_space_nr=4, description="Standard setup, close to main entrance"),
-    Desk(open_space_nr=4, description="Single monitor, couch nearby, relaxed zone"),
+    Desk(open_space_nr=4, description="Triple monitors, executive chair, window side", image_filename="image4.jpg"),
+    Desk(open_space_nr=4, description="Single monitor, shared table, open space", image_filename="image4.jpg"),
+    Desk(open_space_nr=4, description="Dual monitors, creative zone, whiteboard wall", image_filename="image4.jpg"),
+    Desk(open_space_nr=4, description="Triple monitors, next to manager desk", image_filename="image4.jpg"),
+    Desk(open_space_nr=4, description="Standing desk, ergonomic mat, back to wall", image_filename="image4.jpg"),
+    Desk(open_space_nr=4, description="Dual monitors, LED lamp, bookshelf", image_filename="image4.jpg"),
+    Desk(open_space_nr=4, description="Standard setup, close to main entrance", image_filename="image4.jpg"),
+    Desk(open_space_nr=4, description="Single monitor, couch nearby, relaxed zone", image_filename="image4.jpg"),
 ]
+
 
 with app.app_context():
     db.create_all()
@@ -185,7 +187,7 @@ def register():
 def desks():
     return render_template("desk.html")
 
-@app.route("/desk/<int:desk_id>")
+@app.route("/desk/<int:desk_id>", methods=["GET", "POST"])
 @login_required
 def desk_detail(desk_id):
 
