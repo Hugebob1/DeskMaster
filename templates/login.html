@@ -73,6 +73,13 @@
 </head>
 <body>
     <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
         <h2>Log in to Desk Master</h2>
         <form method="POST" action="{{ url_for('log_in') }}">
             <input type="email" name="email" placeholder="Email" required>

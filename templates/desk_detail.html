@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Desk Details</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f8f8f8;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+
+        h2 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+
+        .info {
+            margin-bottom: 1.5rem;
+        }
+
+        .info p {
+            margin: 0.5rem 0;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .buttons form {
+            display: inline;
+        }
+
+        .buttons button {
+            padding: 10px 18px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .buttons button:hover {
+            background-color: #2980b9;
+        }
+
+        a.back {
+            display: inline-block;
+            margin-top: 1rem;
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        a.back:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Desk #{{ desk.id }} Details</h2>
+        <div class="info">
+            <p><strong>Open Space:</strong> {{ desk.open_space_nr }}</p>
+            <p><strong>Description:</strong> {{ desk.description }}</p>
+        </div>
+
+<!--        <div class="buttons">-->
+<!--            <form action="{{ url_for('reserve_desk', desk_id=desk.id, days=1) }}" method="post">-->
+<!--                <button type="submit">Reserve for 1 day</button>-->
+<!--            </form>-->
+<!--            <form action="{{ url_for('reserve_desk', desk_id=desk.id, days=2) }}" method="post">-->
+<!--                <button type="submit">Reserve for 2 days</button>-->
+<!--            </form>-->
+<!--        </div>-->
+
+        <a class="back" href="{{ url_for('desks') }}">← Back to desk list</a>
+    </div>
+</body>
+</html>

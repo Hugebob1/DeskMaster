@@ -7,7 +7,7 @@ from flask_ckeditor import CKEditor
 from flask_login import UserMixin, login_user, LoginManager, current_user, logout_user, login_required
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy import Integer, String, Text, select, ForeignKey
+from sqlalchemy import Integer, String, Text, select, ForeignKey, Date
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
 # Import your forms from the forms.py
@@ -44,9 +44,74 @@ class User(UserMixin, db.Model):
     email: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(250), nullable=False)
 
+    # relations
+    reservations = relationship("Reservation", back_populates="user")
+
+class Desk(db.Model):
+    __tablename__ = "desks"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    open_space_nr: Mapped[str] = mapped_column(Integer, nullable=False)
+    description: Mapped[str] = mapped_column(String(500), nullable=False)
+
+    reservations = relationship("Reservation", back_populates="desk")
+
+class Reservation(db.Model):
+    __tablename__ = "reservations"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[date] = mapped_column(Date, nullable=False)
+
+    desk_id: Mapped[int] = mapped_column(ForeignKey("desks.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("desk_users.id"))
+
+    # relations
+    desk = relationship("Desk", back_populates="reservations")
+    user = relationship("User", back_populates="reservations")
+
+# adding desks
+desks = [
+    Desk(open_space_nr=1, description="Dual monitors, ergonomic chair, next to window"),
+    Desk(open_space_nr=1, description="Single monitor, near kitchen, standing desk"),
+    Desk(open_space_nr=1, description="Triple monitors, corner spot, noise-cancelling headphones"),
+    Desk(open_space_nr=1, description="Standard desk with lamp, near wall"),
+    Desk(open_space_nr=1, description="Dual monitors, high-back chair, under AC"),
+    Desk(open_space_nr=1, description="Single monitor, next to team leader"),
+    Desk(open_space_nr=1, description="Triple monitors, quiet zone, adjustable chair"),
+    Desk(open_space_nr=1, description="Single monitor, whiteboard nearby"),
+
+    Desk(open_space_nr=2, description="Dual monitors, back to window, book shelf nearby"),
+    Desk(open_space_nr=2, description="Single monitor, open area, team desk"),
+    Desk(open_space_nr=2, description="Corner desk, triple monitors, quiet environment"),
+    Desk(open_space_nr=2, description="Height-adjustable desk, ergonomic keyboard"),
+    Desk(open_space_nr=2, description="Standard setup, under bright lights"),
+    Desk(open_space_nr=2, description="Dual monitors, bean bag next to it"),
+    Desk(open_space_nr=2, description="Single monitor, high traffic area"),
+    Desk(open_space_nr=2, description="Triple monitors, close to exit"),
+
+    Desk(open_space_nr=3, description="Standing desk, dual monitors, window view"),
+    Desk(open_space_nr=3, description="Corner desk, one monitor, quiet side"),
+    Desk(open_space_nr=3, description="Dual monitors, near balcony door"),
+    Desk(open_space_nr=3, description="Single monitor, center of open space"),
+    Desk(open_space_nr=3, description="Triple monitors, storage cabinet nearby"),
+    Desk(open_space_nr=3, description="Standard desk, team collaboration area"),
+    Desk(open_space_nr=3, description="Dual monitors, by emergency exit"),
+    Desk(open_space_nr=3, description="Single monitor, plant decoration nearby"),
+
+    Desk(open_space_nr=4, description="Triple monitors, executive chair, window side"),
+    Desk(open_space_nr=4, description="Single monitor, shared table, open space"),
+    Desk(open_space_nr=4, description="Dual monitors, creative zone, whiteboard wall"),
+    Desk(open_space_nr=4, description="Triple monitors, next to manager desk"),
+    Desk(open_space_nr=4, description="Standing desk, ergonomic mat, back to wall"),
+    Desk(open_space_nr=4, description="Dual monitors, LED lamp, bookshelf"),
+    Desk(open_space_nr=4, description="Standard setup, close to main entrance"),
+    Desk(open_space_nr=4, description="Single monitor, couch nearby, relaxed zone"),
+]
 
 with app.app_context():
     db.create_all()
+    # added all desks to tab
+    # db.session.add_all(desks)
+    # db.session.commit()
 
 
 def is_permitted(email: str) -> bool:
@@ -119,6 +184,14 @@ def register():
 @login_required
 def desks():
     return render_template("desk.html")
+
+@app.route("/desk/<int:desk_id>")
+@login_required
+def desk_detail(desk_id):
+
+    desk = Desk.query.get_or_404(desk_id)
+
+    return render_template("desk_detail.html", desk=desk)
 
 
 if __name__ == "__main__":

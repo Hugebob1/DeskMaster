@@ -46,6 +46,7 @@
             grid-gap: 20px;
             justify-content: center;
             margin: 2rem auto;
+            text-decoration: none;
         }
 
         .desk {
@@ -93,32 +94,36 @@
 
     <h1>Desk Master – Choose Your Desk</h1>
     <div class="workspace">
-        <div class="section-label">Open Space 1</div>
-        {% for i in range(1, 9) %}
-            <div class="desk" onclick="selectDesk({{ i }})">B{{ i }}</div>
-        {% endfor %}
+    <div class="section-label">Open Space 1</div>
+    {% for i in range(1, 9) %}
+        <a href="{{ url_for('desk_detail', desk_id=i) }}">
+            <div class="desk">B{{ i }}</div>
+        </a>
+    {% endfor %}
 
-        <div class="section-label">Open Space 2</div>
-        {% for i in range(9, 17) %}
-            <div class="desk" onclick="selectDesk({{ i }})">B{{ i }}</div>
-        {% endfor %}
+    <div class="section-label">Open Space 2</div>
+    {% for i in range(9, 17) %}
+        <a href="{{ url_for('desk_detail', desk_id=i) }}">
+            <div class="desk">B{{ i }}</div>
+        </a>
+    {% endfor %}
 
-        <div class="section-label">Open Space 3</div>
-        {% for i in range(17, 25) %}
-            <div class="desk" onclick="selectDesk({{ i }})">B{{ i }}</div>
-        {% endfor %}
+    <div class="section-label">Open Space 3</div>
+    {% for i in range(17, 25) %}
+        <a href="{{ url_for('desk_detail', desk_id=i) }}">
+            <div class="desk">B{{ i }}</div>
+        </a>
+    {% endfor %}
 
-        <div class="section-label">Open Space 4</div>
-        {% for i in range(25, 33) %}
-            <div class="desk" onclick="selectDesk({{ i }})">B{{ i }}</div>
-        {% endfor %}
-    </div>
+    <div class="section-label">Open Space 4</div>
+    {% for i in range(25, 33) %}
+        <a href="{{ url_for('desk_detail', desk_id=i) }}">
+            <div class="desk">B{{ i }}</div>
+        </a>
+    {% endfor %}
+</div>
 
     <script>
-        function selectDesk(deskNumber) {
-            alert("Desk B" + deskNumber + " clicked!\n(reservation details here later)");
-        }
-
         function updateDateTime() {
             const now = new Date();
             const day = String(now.getDate()).padStart(2, '0');
