@@ -194,13 +194,18 @@ def register():
 @login_required
 def desks():
 
-    des = Desk.query.all()
-    for d in des:
-        for reservation in d.reservations:
-            print(reservation.start_date)
-        print(f"{d.id}: {d.reservations}")
+    office_desks = Desk.query.all()
 
-    return render_template("desk.html")
+    desk_count = {}
+    for desk in office_desks:
+        if desk.reservations:
+            days = 0
+            for res in desk.reservations:
+                days += (res.end_date - res.start_date).days + 1
+            desk_count[desk.id] = days
+        else: desk_count[desk.id] = 0
+
+    return render_template("desk.html", desks=desk_count)
 
 @app.route("/desk/<int:desk_id>", methods=["GET", "POST"])
 @login_required
