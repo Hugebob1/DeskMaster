@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 import os
 import werkzeug
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
@@ -126,7 +126,12 @@ def is_permitted(email: str) -> bool:
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    if current_user.is_authenticated:
+        user_reservations = Reservation.query.filter_by(user_id=current_user.id).all()
+    else:
+        user_reservations = None
+
+    return render_template("index.html", reservation=user_reservations)
 
 @app.route("/login", methods=["GET", "POST"])
 def log_in():
@@ -150,7 +155,10 @@ def log_in():
 
     return render_template("login.html")
 
-
+@app.route("/logout", methods=["GET", "POST"])
+def log_out():
+    logout_user()
+    return redirect(url_for('index'))
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
@@ -185,6 +193,13 @@ def register():
 @app.route("/desks")
 @login_required
 def desks():
+
+    des = Desk.query.all()
+    for d in des:
+        for reservation in d.reservations:
+            print(reservation.start_date)
+        print(f"{d.id}: {d.reservations}")
+
     return render_template("desk.html")
 
 @app.route("/desk/<int:desk_id>", methods=["GET", "POST"])
@@ -195,7 +210,44 @@ def desk_detail(desk_id):
 
     return render_template("desk_detail.html", desk=desk)
 
+@app.route("/reserve/<int:desk_id>/<int:days>", methods=["POST"])
+@login_required
+def reserve_desk(desk_id, days):
+    desk = Desk.query.get_or_404(desk_id)
+    start = date.today() + timedelta(days=1)
+    end = start + timedelta(days=days-1)
+
+    overlapping = Reservation.query.filter(
+        Reservation.desk_id == desk.id,
+        Reservation.start_date <= end,
+        Reservation.end_date >= start
+    ).first()
+
+    if overlapping:
+        flash("Desk already reserved.")
+        print('Desk already reserved.')
+        return redirect(url_for('desks'))
+
+    new_reserve = Reservation(
+        desk_id=desk.id,
+        start_date=start,
+        end_date=end,
+        user_id=current_user.id,
+    )
+    db.session.add(new_reserve)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
 
 if __name__ == "__main__":
     app.config['DEBUG'] = True
     app.run(debug=True, port=5002)
+
+
+# to do:
+# add canceling reservations
+# add colors to desks buttons which are already reserved
+# don't let to reserve to desks at the same day
+# reservations expires after 20:00pm each day
+# repair the footer

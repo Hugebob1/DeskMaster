@@ -65,6 +65,13 @@
         a.back:hover {
             text-decoration: underline;
         }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            color: #000;
+        }
     </style>
 </head>
 <body>
@@ -79,19 +86,23 @@
             <p><strong>Description:</strong> {{ desk.description }}</p>
         </div>
 
-{#
-<div class="buttons">
-    <form action="{{ url_for('reserve_desk', desk_id=desk.id, days=1) }}" method="post">
-        <button type="submit">Reserve for 1 day</button>
-    </form>
-    <form action="{{ url_for('reserve_desk', desk_id=desk.id, days=2) }}" method="post">
-        <button type="submit">Reserve for 2 days</button>
-    </form>
-</div>
-#}
+
+
+        <div class="buttons">
+            <form action="{{ url_for('reserve_desk', desk_id=desk.id, days=1) }}" method="post">
+                <button type="submit">Reserve for 1 day</button>
+            </form>
+            <form action="{{ url_for('reserve_desk', desk_id=desk.id, days=2) }}" method="post">
+                <button type="submit">Reserve for 2 days</button>
+            </form>
+        </div>
+
 
 
         <a class="back" href="{{ url_for('desks') }}">← Back to desk list</a>
     </div>
+<footer class="footer">
+    © 2025 Desk Master – All rights reserved
+</footer>
 </body>
 </html>

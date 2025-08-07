@@ -5,12 +5,22 @@
     <title>Login — Desk Master</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body {
+        html, body {
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
             background: linear-gradient(120deg, #6e8efb, #a777e3);
-            height: 100vh;
+            height: 100%;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        main {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -69,24 +79,38 @@
             color: #ffffffcc;
             text-decoration: underline;
         }
+
+        .footer {
+            text-align: center;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for message in messages %}
-              <p style="color: red;">{{ message }}</p>
-            {% endfor %}
-          {% endif %}
-        {% endwith %}
-        <h2>Log in to Desk Master</h2>
-        <form method="POST" action="{{ url_for('log_in') }}">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Log In</button>
-        </form>
-        <a class="back-link" href="{{ url_for('index') }}">← Back to home</a>
-    </div>
+    <main>
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <p style="color: red;">{{ message }}</p>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+            <h2>Log in to Desk Master</h2>
+            <form method="POST" action="{{ url_for('log_in') }}">
+                <input type="email" name="email" placeholder="Email" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <button type="submit">Log In</button>
+            </form>
+            <a class="back-link" href="{{ url_for('index') }}">← Back to home</a>
+        </div>
+    </main>
+
+    <footer class="footer">
+        © 2025 Desk Master – All rights reserved
+    </footer>
 </body>
 </html>
