@@ -103,8 +103,6 @@ a.button:hover {
 </head>
 <body>
 
-
-    {% if current_user.is_authenticated %}
     {% with messages = get_flashed_messages() %}
           {% if messages %}
             {% for message in messages %}
@@ -112,6 +110,8 @@ a.button:hover {
             {% endfor %}
           {% endif %}
         {% endwith %}
+    {% if current_user.is_authenticated %}
+
     <h1 class="userName">Hi {{ current_user.name }}</h1>
         <div class="container">
             <h1>Desk Master</h1>
