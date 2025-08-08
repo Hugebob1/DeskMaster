@@ -1,0 +1,5 @@
+instance/users.db
+instance/permitted_users_emails.txt
+__pycache__/
+*.pyc
+.env
