@@ -10,7 +10,7 @@ from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy import Integer, String, Text, select, ForeignKey, Date
 from functools import wraps
 from werkzeug.security import generate_password_hash, check_password_hash
-# Import your forms from the forms.py
+# Import your forms from the forms.p
 from typing import List
 from dotenv import load_dotenv
 load_dotenv()
@@ -161,10 +161,12 @@ def index():
     if current_user.is_authenticated:
 
         user_reservations = Reservation.query.filter_by(user_id=current_user.id).all()
+        return render_template("index.html", reservation=user_reservations, month=datetime.now().strftime('%B'),
+                               days=current_user.days, total=current_user.total)
     else:
         user_reservations = None
 
-    return render_template("index.html", reservation=user_reservations, month=datetime.now().strftime('%B'), days=current_user.days, total=current_user.total)
+        return render_template("index.html", reservation=user_reservations)
 
 @app.route("/login", methods=["GET", "POST"])
 def log_in():
@@ -253,29 +255,33 @@ def desk_detail(desk_id):
 @login_required
 def reserve_desk(desk_id, days):
     update_reservations()
-    desk = Desk.query.get_or_404(desk_id)
-    start = date.today() + timedelta(days=1)
-    end = start + timedelta(days=days-1)
 
-    overlapping = Reservation.query.filter(
-        Reservation.desk_id == desk.id,
-        Reservation.start_date <= end,
-        Reservation.end_date >= start
-    ).first()
+    if not current_user.reservations:
+        desk = Desk.query.get_or_404(desk_id)
+        start = date.today() + timedelta(days=1)
+        end = start + timedelta(days=days-1)
 
-    if overlapping:
-        flash("Desk already reserved.")
-        print('Desk already reserved.')
-        return redirect(url_for('desks'))
+        overlapping = Reservation.query.filter(
+            Reservation.desk_id == desk.id,
+            Reservation.start_date <= end,
+            Reservation.end_date >= start
+        ).first()
 
-    new_reserve = Reservation(
-        desk_id=desk.id,
-        start_date=start,
-        end_date=end,
-        user_id=current_user.id,
-    )
-    db.session.add(new_reserve)
-    db.session.commit()
+        if overlapping:
+            flash("Desk already reserved.")
+            print('Desk already reserved.')
+            return redirect(url_for('desks'))
+
+        new_reserve = Reservation(
+            desk_id=desk.id,
+            start_date=start,
+            end_date=end,
+            user_id=current_user.id,
+        )
+        db.session.add(new_reserve)
+        db.session.commit()
+    else:
+        flash("You have active reservation.")
 
     return redirect(url_for('index'))
 
