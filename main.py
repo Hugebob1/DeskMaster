@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 import os
 import werkzeug
 from flask import Flask, abort, render_template, redirect, url_for, flash, request
@@ -43,7 +43,8 @@ class User(UserMixin, db.Model):
     name: Mapped[str] = mapped_column(String(250), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(250), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(String(250), nullable=False)
-
+    days: Mapped[int] = mapped_column(Integer, nullable=False)
+    total: Mapped[int] = mapped_column(Integer, nullable=False)
     # relations
     reservations = relationship("Reservation", back_populates="user")
 
@@ -124,14 +125,46 @@ def is_permitted(email: str) -> bool:
     except FileNotFoundError:
         return False
 
+
+def update_reservations():
+    reservations = Reservation.query.all()
+    now = datetime.now().date()
+    for reservation in reservations:
+        user = User.query.filter_by(id=reservation.user_id).first()
+        if reservation.end_date < now:
+            days_in_office = (reservation.end_date - reservation.start_date).days + 1
+            user.days += days_in_office
+            db.session.delete(reservation)
+        elif reservation.end_date == now and datetime.now().hour >= 20:
+            days_in_office = (reservation.end_date - reservation.start_date).days + 1
+            user.days += days_in_office
+            db.session.delete(reservation)
+
+    db.session.commit()
+
+def reset_days():
+    today = datetime.now()
+    if today.day == 1:
+        users = User.query.all()
+        for user in users:
+            user.total += user.days
+            user.days = 0
+        db.session.commit()
+
+@app.before_request
+def before_first_request():
+    reset_days()
+
 @app.route("/", methods=["GET", "POST"])
 def index():
+    update_reservations()
     if current_user.is_authenticated:
+
         user_reservations = Reservation.query.filter_by(user_id=current_user.id).all()
     else:
         user_reservations = None
 
-    return render_template("index.html", reservation=user_reservations)
+    return render_template("index.html", reservation=user_reservations, month=datetime.now().strftime('%B'), days=current_user.days, total=current_user.total)
 
 @app.route("/login", methods=["GET", "POST"])
 def log_in():
@@ -156,6 +189,7 @@ def log_in():
     return render_template("login.html")
 
 @app.route("/logout", methods=["GET", "POST"])
+@login_required
 def log_out():
     logout_user()
     return redirect(url_for('index'))
@@ -181,7 +215,7 @@ def register():
 
         password = generate_password_hash(password, method='pbkdf2:sha256', salt_length=8)
 
-        new_user = User(name=user_name, email=email, password=password)
+        new_user = User(name=user_name, email=email, password=password, days=0, total=0)
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user)
@@ -193,7 +227,7 @@ def register():
 @app.route("/desks")
 @login_required
 def desks():
-
+    update_reservations()
     office_desks = Desk.query.all()
 
     desk_count = {}
@@ -210,7 +244,7 @@ def desks():
 @app.route("/desk/<int:desk_id>", methods=["GET", "POST"])
 @login_required
 def desk_detail(desk_id):
-
+    update_reservations()
     desk = Desk.query.get_or_404(desk_id)
 
     return render_template("desk_detail.html", desk=desk)
@@ -218,6 +252,7 @@ def desk_detail(desk_id):
 @app.route("/reserve/<int:desk_id>/<int:days>", methods=["POST"])
 @login_required
 def reserve_desk(desk_id, days):
+    update_reservations()
     desk = Desk.query.get_or_404(desk_id)
     start = date.today() + timedelta(days=1)
     end = start + timedelta(days=days-1)
@@ -240,6 +275,17 @@ def reserve_desk(desk_id, days):
         user_id=current_user.id,
     )
     db.session.add(new_reserve)
+    db.session.commit()
+
+    return redirect(url_for('index'))
+
+@app.route("/clear", methods=["GET", "POST"])
+@login_required
+def clear_res():
+    update_reservations()
+    user = User.query.filter_by(id=current_user.id).first()
+    for reservation in user.reservations:
+        db.session.delete(reservation)
     db.session.commit()
 
     return redirect(url_for('index'))
